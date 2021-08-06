@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sembast_demo/db/app_theme.dart';
 import 'package:sembast_demo/db/db.dart';
 import 'package:sembast_demo/pages/home_page.dart';
@@ -24,11 +25,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Material App',
-        theme: MyAppTheme.instance.darkEnabled
-            ? ThemeData.dark()
-            : ThemeData.light(),
-        home: HomePage());
+    return ChangeNotifierProvider.value(
+      value: MyAppTheme.instance,
+      child: Consumer<MyAppTheme>(
+        builder: (_, value, child) => MaterialApp(
+            title: 'Material App',
+            theme: value.darkEnabled ? ThemeData.dark() : ThemeData.light(),
+            home: HomePage()),
+      ),
+    );
   }
 }
