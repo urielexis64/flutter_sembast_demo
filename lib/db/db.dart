@@ -10,6 +10,8 @@ class DB {
 
   late Database _database;
 
+  Database get database => _database;
+
   Future<void> init() async {
     final String dbName = 'flutter_sembast.db';
 
