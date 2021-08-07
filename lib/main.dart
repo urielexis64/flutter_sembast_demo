@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
       value: MyAppTheme.instance,
       child: Consumer<MyAppTheme>(
         builder: (_, value, child) => MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Material App',
             theme: value.darkEnabled ? ThemeData.dark() : ThemeData.light(),
             home: HomePage()),
