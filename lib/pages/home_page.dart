@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast_demo/db/app_theme.dart';
 import 'package:sembast_demo/db/users_store.dart';
+import 'package:sembast_demo/helpers/helpers.dart';
 import 'package:sembast_demo/modesl/user.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,33 +29,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   _removeAll() async {
-    final removeCount = await UsersStore.instance.removeAll();
-    users.clear();
-    setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$removeCount items were removed.')));
+    Helpers.showYesNoDialog(context, 'Remove all', 'Are you sure?', () async {
+      final removeCount = await UsersStore.instance.removeAll();
+      users.clear();
+      setState(() {});
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$removeCount items were removed.')));
+    });
   }
 
   _removeById(id) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Are you sure?'),
-        actions: [
-          TextButton(
-              onPressed: () async {
-                await UsersStore.instance.removeById(id);
-                users.removeWhere((user) => user.id == id);
-                setState(() {});
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('User removed successfully.')));
-              },
-              child: Text('Yes')),
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('No'))
-        ],
-      ),
-    );
+    Helpers.showYesNoDialog(context, 'Remove user', 'Are you sure?', () async {
+      await UsersStore.instance.removeById(id);
+      users.removeWhere((user) => user.id == id);
+      setState(() {});
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('User removed successfully.')));
+    });
   }
 
   @override
@@ -93,6 +86,7 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: _load,
             heroTag: 'reload',
+            tooltip: 'Sort by name',
             child: Icon(
               Icons.sort,
               color: Colors.white,
@@ -104,6 +98,7 @@ class _HomePageState extends State<HomePage> {
           ),
           FloatingActionButton(
             onPressed: _removeAll,
+            tooltip: 'Clear all users',
             heroTag: 'clear',
             child: Icon(
               Icons.clear_all,
@@ -115,6 +110,7 @@ class _HomePageState extends State<HomePage> {
             width: 15,
           ),
           FloatingActionButton(
+            tooltip: 'Add user',
             onPressed: _add,
             heroTag: 'add',
             child: Icon(
